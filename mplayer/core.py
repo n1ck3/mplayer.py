@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with mplayer.py.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import shlex
 import atexit
 import weakref
@@ -276,7 +277,7 @@ class Player(object):
                                 bufsize=-1, stdout=subprocess.PIPE)
         for line in proc.stdout:
             # skip version string at end of mplayer2 output
-            if line.startswith("MPlayer"):
+            if line.startswith(b"MPlayer"):
                 continue
             args = line.decode('utf-8', 'ignore').split()
             if not args:
@@ -319,7 +320,7 @@ class Player(object):
         # Start the MPlayer process (unbuffered)
         self._proc = subprocess.Popen(args, stdin=subprocess.PIPE,
             stdout=self._stdout._handle, stderr=self._stderr._handle,
-            close_fds=(not subprocess.mswindows))
+            close_fds=(not sys.platform == 'win32'))
         if self._proc.stdout is not None:
             self._stdout._attach(self._proc.stdout)
         if self._proc.stderr is not None:
